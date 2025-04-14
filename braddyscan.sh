@@ -46,7 +46,7 @@ echo "Open ports: $PORTS"
 
 #Do a detailed scan of open ports
 
-echo "Preforming a deep scan of ports on $IP and saving it as nmap_scan_$IP.txt"
+echo "Performing a deep scan of ports on $IP and saving it as nmap_scan_$IP.txt"
 nmap -p $PORTS -sVC -O -oN "nmap_scan_$IP.txt" $IP
 
 #Check for HTTP in the results of the scan 
@@ -73,8 +73,8 @@ fi
 
 echo "DEBUG: HTTP_PORTS='$HTTP_PORTS'" #DEBUGING BUT MIGHT KEEP
 
-read -p "Enter wordlist path (Press enter for /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt): " WORDLIST
-WORDLIST=${WORDLIST:-/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt}
+read -p "Enter wordlist path (Press enter for /usr/share/wordlists/dirb/common.txt): " WORDLIST
+WORDLIST=${WORDLIST:-/usr/share/wordlists/dirb/common.txt}
 if [ ! -f "$WORDLIST" ]; then
     echo "Wordlist not found: $WORDLIST"
     exit 1
@@ -106,7 +106,7 @@ for PORT in $HTTP_PORTS; do
             FULL_URL="${BASE_URL}${CLEAN_DIR}"
             queue+=("$FULL_URL")
         fi
-    done < <(grep -E "301|302" "$OUTPUT_FILE" | awk -F '[ ]' '{print $1}')
+    done < <(grep -E "301" "$OUTPUT_FILE" | awk -F '[ ]' '{print $1}')
 
     echo "DEBUG: Found directories at level 1: ${queue[*]}"
 done
@@ -136,7 +136,7 @@ while [ ${#queue[@]} -gt 0 ] && [ "$CURRENT_DEPTH" -le "$DEPTH" ]; do
                 FULL_URL="${URL}${CLEAN_DIR}"
                 next_level_dirs+=("$FULL_URL")
             fi
-        done < <(grep -E "301|302|405" "$OUTPUT_FILE" | awk -F '[ ]' '{print $1}')
+        done < <(grep -E "301|405" "$OUTPUT_FILE" | awk -F '[ ]' '{print $1}')
 
         echo "DEBUG: Directories found at depth $CURRENT_DEPTH: ${next_level_dirs[*]}"
     done
